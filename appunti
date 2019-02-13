@@ -1,0 +1,585 @@
+Martedì 23 ottobre 2018
+Architettura del sistema di calcolo
+
+Architettura SISD: singola istruzione, singolo dato
+""	 MIMD multiple instructions
+
+Ci sono anche le vie di mezzo
+SIMD same instruction multiple data
+MISD multiple instructions, single data //è un po' di nicchia
+
+Noi vedremo l'arch. SISD, la cui architettura principale è quella di Von Neumann
+Qui la memoria contiene sia le istruzioni che i dati con cui lavoriamo, la macchina è programmabile
+Si passa da un'architettura a controllore che esegue sempre le stesse istruzioni ad una architettura che può eseguire diversi programmi (= Controllore programmabile). 
+Il sistema minimale è dotato di unità centale e di memoria. Per essere utilizzabile ha bisogno di interfacce di ingresso ed uscita per inserire dati e per visualizzarli.
+
+Ciclo FETCH-DECODE-EXECUTE eseguito fino all halt 
+La CPU comunica con tutti 
+
+Vantaggio di un sistema a connessione completa: affidbilità, scalabilità
+Sistema a bus: unico canale di comunicazione in cui tutti vedono il dato trasmesso ma solo il destinatario lo riceve.
+
+Unico elemento che comanda e tutti gli altri rispondono alla CPU
+Memoria di lavoro è una matrice organizzata in banchi di memoria, un tempo 8 bit, adesso 64, contentente 0 o 1 in segnali elettrici
+Il bus è composto da data bus (contenente i dati, bidirezionale), bus indirizzi (letto e scritto dalla CPU), monodirezionale, control bus
+
+Ampiezza bus idealmente dovrebbe essere dell'ampiezza della memoria. La dimensione del banco di memoria è la parola.
+DRAM: dynamic random access memory. Il tempo di accesso non dipende dalla sua posizione -> random
+Un tempo la memoria era su nastro e il tempo di accesso dipendeva dalla posizione. Oggi on più. Ieri tempo di accesso sequenziale
+Sui dischi magnetici la posizione influisce sul tempo di accesso. Nella memoria elettorinica no.
+Memoria non permanente, se non è alimentata non contiene niente. Quando si accende il calcolatore il contenuto è casuale. memoria volatile
+DRAM il contenuto man mano sparisce. Quindi ogni tanto fa un refresh del contenuto. La memoria viene continuamente rinfrescata. C'è un po'di impredicibilità nell'accesso alla memoria.
+Dispositivi di I/O. O la CPU si aspetta un dato dal dispositivo oppure si fa avvertire. Il dispositivo di uscita si comporta al contrario: segnale di controllo e connessione al bus dati.
+Si autilizza un buffer per la sincronizzazione. Se non c'è la disponibilità di inviare un dato in undato momento, esso viene messo in un buffer. Il valore messo nel bus è mantenuto nel buffer fin tanto che non si è sicuri che sia stata recepita.
+
+Zoom sulla CPU
+2 registri interni: 1col bus dati, 1 col bus indirizzi. MDR e MAR. Memory data register e Memory address register sono registri interni alla CPU. PC è registro che punta all'istruzione successiva a quella in esecuzione. PC (program counter) contiene l'indirizzo dell'istruzione successiva a quella in esecuzione. Deve avere lunghezza n
+IR: instruction register contiene una copia dell'istruzione attualmente in esecuzione.
+Decode unit: scompone in istruzioni di base.
+
+Due filosofie di pensiero: RISC e CISC
+RISC sa fare solo operazioni di base, CISC sa fare operazoni più complesse.
+CISC più difficile da compilare.
+RISC è il modello più vicino ad oggi.
+Registri ad uso generale: register file attaccati al bus
+ALU: unità aritmetico-logica in grado di fare solo somme, sottrazione, and, or. Ce ne sono 2: I-ALU e F-ALU.
+PSW: Processor Status Word. C'è un bit di questi che ogni qual volta il risultato dell'operazione è nagativo viene messo a 1, poi c'è il riporto (carry), overflow, underflow. Ci sono gli indicatori. 
+Uniformare le operazioni da fare è più conveniente. 
+Control unit lavora con decode unit.
+Stack pointer è l'ultimo registro (SP). È memoria di lavoro che tiene un'area di memoria particolarememorizzata a stack.
+TENDENZIALMENTE poca memoria di rapidissimo accesso perché costa e fuori la memoria di lavoro, più capiente ma meno rapida.
+Tra il registro e la memoria di lavoro c'è una memoria cache che è esterna alla cpu ma ad essa collegata direttamente.
+
+Lunedì 15 ottobre 2018
+Correzione esercizi con soluzione della proffa
+Esercizio 1:
+programma in C che, dato in input un numero, CALCOLA e poi visualizza il numero specchiato. Niente controlli. Se io metto 9001 vedo 1009. Se inserisco 900 il risultato è 9 (non 009).
+
+Per costruire un numero al contrario
+#define BASE 10
+int val, rev, digit;
+rev = 0;
+while(val > 0){
+	digit = val % BASE;
+	rev = rev*BASE + digit
+	val = val / BASE;
+}
+printf("%d\n", rev);
+
+Esercizio 2
+Può essere un buon modo farsi prima un algoritmo a mano 
+
+Martedì 13 novembre 2018
+Aspetti tecnici dei sottoprogrammi
+iniziamo con un esercizio (vedere esercizio.c)
+Scrivere una return doppia:
+*****
+if(i<k)
+	return -1;
+return ris;
+*****
+Se incontro la return, il sottoprogramma esce
+Stack e heap sono due memorie opposte. Lo stack fa riferimento al main e contiene tutte le sue variabili. Quando chiamiamo un sottoprogramma viene allocato uno spazio per il valore restituito dalla funzione, i parametri in ingresso e le sue variabili locali.
+L'indirizzo di ritorno è il punto in cui tornare una volta finito il sottoprogramma. 
+RECORD DI ATTIVAZIONE: cosa viene creato quando viene chiamato un sottoprogramma.
+Il primissimo record di attivazione è quello del main.
+Nel momento in cui il sottoprogramma è terminato, lo stack pointer si abbassa cosicché gli elementi in memoria dello stack corrispondenti al sottoprogramma possano essere sovrascritti.
+
+Passaggio per copia valore o PASSAGGIO PER VALORE: al sottoprogramma vengono passati dei parametri come delle copie dei valori originali. È sicuro perché non intacca le variabili originali.
+
+PASSAGGIO PER COPIA INDIRIZZO, anche detto passaggio per indirizzo.
+Il sottoprogramma restituisce un indirizzo, solitamente di un array. Il sottoprogramma modifica il valore originale del dato. Pericoloso ed efficiente. Lo uso anche quando mi serve che il sottoprogramma modifichi i valori.
+
+Due cose difficili di oggi
+Trasmissione per indirizzo fatto adesso.
+CHIAMATA: func(input, &varcondivisa);
+SOTTOPROGRAMMA void func(int input, int * varcondivisa){
+	...
+	*varcondivisa = risultato;
+	return 0;
+}
+PROTOTIPO: void func(int, int *); //non ne sono sicuro
+
+TRASMETTE sull'esame significa che bisogna passare l'indirizzo
+
+Giovedì 15 novembre 2018
+ARITMETICA DEI PUNTATORI
+Passare sempre le dimensioni di una matrice
+Matrice m[i][j] trovo la posizione facendo i*NUMCOL+j
+
+MATRICE 2x2
+[00][01]
+[10][11]
+
+m[i][j] si può sempre scrivere come: *(&m[0][0]+i*NC+j) //operatore asterisco dice il contenuto della memoria ad un dato indirizzo. Si può anche scrivere m[i][j]= *(m+i*NC+j)
+
+v[i] == *(v+i);
+m[i][j] == *(m*NC+j);
+
+Quando ho un sottoporpgramma con input un array bidimensionale o pluridimensonale DEVO scrivere nei parametri in ingresso la dimensione delle dimensioni >1.
+Esempio: void f(int m[][NC], int nrighe, int ncolonne)
+È buona pratica farsi mandare sempre la dimensione di righe e colonne.
+
+Prototipo della funzione con array bidimensionale
+int f(int[][NC], int, int);
+
+Funzione che restituisce lunghezza della stringa
+int strlen(char str[]){
+	int len;
+	for (len=0; str[len]!=0; len++)
+		;
+	return len;
+}
+
+/*arriva l'indirizzo di un carattere*/
+int strlen(char * s){
+	int i;
+	for(i=0; *(s+1) !='\0'; i++)
+		;
+}
+
+Questi due sottoprogrammi sono equivalenti. Non mischiare le due cose.
+
+Esiste anche la libreria standard <string.h> che contiene il metodo strlen che svolge la stessa cosa. Ecco i prototipi.
+
+int strlen(char *);
+int strcmp(char [], char []); 
+Quest'ultimo restituisce 0, >0 o <0. Numero negativo == s1 viene alfabeticamente prima di s2.
+
+Libreria matematica <math.h>
+Questa contiene pow(x,y) e sqrt(x) che restituiscono dei double.
+
+Cosa NON fare (questo è un mostro):
+for(i=0; i<strlen(s); i++)
+PERCHÉ È UN ENORME DISPENDIO DI RISORSE CPU E STACK DI MEMORIA.
+Potevo farne una sola e usare la variabile.
+
+Da oggi in poi siamo incoraggiati ad usare i sottoprogrammi nelle librerie standard
+
+OCCHIO AL GCC: utilizzare il flag -lm ,ovvero usa anche la libreria matematica.
+
+Provaimo a fare un esercizio: ricevuto in ingresso un array bidimensionale e altri parametri return 1 se matrice è identità, 0 altrimenti. A livello di main c'è una matrice quadrata di dim N
+
+In un sottoprogramma (vedi ese1.c) posso evitare di creare la variabile di ritorno in alcuni casi. Per cui faccio direttamente return 0 oppure return 1.
+
+Linearizzazione degli array bidimensionali è quando li tratto come vettore.
+
+Passaggio di tipi di dato strutturati ad un sottoprogramma
+Faccio sempre un passaggio per indirizzo per strutture perché la bolchini usa quello, anche se non richiede l'accesso in scrittura.
+
+Reference: calcolo.c , codicesupporto.c
+&* si annullano
+& è l'indirizzo, * è il contenuto della variabile
+int main(int argc, char * argv[]){
+	//argc è il numero di argomenti
+	//argv è il vettore di argomenti di tipo char * (stringhe)
+}
+
+Lunedì 19 novembre 2018
+Correzione esercizi
+aiut
+documenti di riferimento: FI_bolchini/2018119/*
+ciao.
+/*******************************************************/
+Martedì 20 novembre 2018
+I FILE
+(ci mancano ancora ricorsione, allocazione dinamica e argv, argc)
+Percorso relativo oppure assoluto
+Permessi di lettura e scrittura
+Se il file esiste già posso leggerlo se ho i permessi; se ho i permessi posso anche sovrascriverlo ed eliminarlo
+L'operazione potrebbe fallire: no suche file or directory oppure permission denied
+Sia in lettura che in scrittura verificare di avere fatto accesso al file
+if(tutto_ok){
+	bono;
+}else{
+	azz;
+}
+S.O. ha un parametro che dice quanti file max possono essere aperti. Quando apro l'n+1 file so'cazzi. La morale è chiudere sempre i files per ogni apertura.
+Lo standard input è come se fosse un file, si apre lo stesso canale. Lo standard output è il video; per stampare sul file il canale è diverso dallo stdout.
+Due tipi di file: di testo (ASCII) oppure binari.
+FILE DI TESTO sono file privi di formattazione. Contengono informazioni visibili da un editor di testo leggibili dagli umani. Dopo avere scritto l'ultimo carattere è buona  norma andare a capo. Alla fine del testo c'è un carattere speciale che indica che il file è finito. Il carattere terminatore nascosto è definito della STDIO.H ed è definito come EOF (End Of File).
+FILE BINARI: esempio di file binario è l'eseguibile. Al suo interno è salvata la sequenza di bit delle cose che ci sono dentro (interi, float, ...). Se l'umano non ha bisogno di vedere i dati ma servono ad una applicazione, essi vengono salvati su file binari. Vantaggi: meno spazio in memoria occupato.
+Se la prof ci dice di creare e riempire un file binario, bisogna chiamare un altro programma. 
+Bisogna sapere il nome del file: più in generale percorso, nome ed estensione. Questo dato sarà contenuto in una stringa.
+Modalità di accesso: LETTURA; SCRITTURA; APPEND; FILE BINARIO.
+read	r
+write	w
+append	a
+binary	b
+
+Esempio: 	leggo un file di testo: -r. 
+Esempio 2:	leggo un file binario  -rb.
+
+Sottoprogrammi che ci servono:
+APRO UN FILE E VERIFICO CHE SIA RAGGIUNGIBILE
+CHIUSURA
+LEGGERE E SCRIVERE
+CONTROLLO SE IL FILE È FINITO
+
+Accesso in APERTURA: fopen("~/nomefile.txt", "w");
+par1: nome del file
+par2: modalità di apertura
+Restituisce una var di tipo FILE *;
+
+Una volta aperto il file bisogna dargli un canale di riferimento. Questa variabile è riferita al file.
+FILE * fp;
+fp = fopen();
+Assegnamo una variabile al riferimento del file appena aperto. 
+Se l'operazione fallisce, la fopen assegna alla variabile il valore NULL (define).
+
+if(fp!=NULL){ /*Condizione bella*/
+	/*faicose*/
+	fclose(fp);
+}
+else{
+	printf("azz!");
+}
+
+CHIUSURA file: fclose(FILE * nomevariabileriferitaalfile);
+Parametro in ingresso è il riferimento al file aperto in precedenza (FILE *).
+
+La fclose è sempre sotto l'if(fp!=NULLL) perché se la fopen fallisce e provo a chiudere il file crasha tutto . 
+
+Si può scrivere anche così:
+if(fp=fopen("nomefile.txt", "r")){
+	/*faicose*/
+	fclose(fp);
+}else{
+	printf("azz!);
+}
+
+LETTURA E SCRITTURA
+
+Lettura: fscanf(FILE *, char[], &var);
+scanf normale: scanf("%d", &dove);
+FSCANF: fscanf(fp, "%d", &n);
+
+Scrittura: fprintf(FILE *, char[], var);
+fscanf(fp, "%d", dove);
+
+Solitamente per definire i file in ingresso / uscita ci sono 2 possibilità:
+1)	Creare define
+		- #define NOMEFIN	"dati.txt"
+		- #define NOMEFDIS	"dispari.txt"
+		- #define NOMEFPARI	"pari.txt"
+2)	Creare array di caratteri ogni volta.
+
+Se usi le define
+printf("errore file %s", NOMEFIN);
+fopen(NOMEFIN, "w");
+
+Si può leggere anche da tastiera su fscanf.
+Il riferimento alla tastiera è una canale sempre aperto chiamato stdin.
+fscanf(stdin, ...);
+fprintf funziona in maniera simile:
+fscanf(stdout, ...);
+
+PRENDERE LE PAROLE NEI FILE DI TESTO
+Così come la gets() esiste la fgets();
+gets(parola);
+fgets(parola, max, fp);
+		parola è la stringa dova salvare le cose prelevate
+		max è il numero massimo di caratteri da prendere in una riga
+		fp è il riferimento al file
+
+Esempio di utilizzo:
+word[DIM+1];
+fgets(word, DIM+1, fin);
+
+Controllo fine file raggiunta si fa con il feof()
+Posso controllare se c'è la fine del file solo se lo leggo prima
+Ciclo a condizione iniziale
+
+int feof(FILE *); /*Restituisce 0 se non l'ha trovata, 1 se l'ha trovata*/
+
+Esempio di codice
+fscanf(fin, "%d", &n);
+while(feof(fin)==0){ /*Si può scrivere anche come while(!feof(fin)){//TODO}*/
+	...
+	fscanf(fin, %d", &n); /*Sempre qui*/
+}
+
+PER I FILE BINARI
+Vantaggio di non dovere convertire niente
+È bello fare un array di 100 interi.
+Lettura:	 fread(un, due, tre, quat);
+Scrittura:	 fwrite(un, due, tre, quat);
+	primo parametro: dove metto/stanno i dati in memoria? Nome array in posizione 0. TIPO: void *
+	secondo parametro: quanto occupa in memoria il singolo elemento del tipo stabilito? TIPO sizeof_t
+	terzo parametro: numero di elementi da leggere/scrivere. TIPO: int
+	quarto parametro: riferimento al file. TIPO: FILE *
+
+Esiste un operatore che,data l'architettura corrente, quanto occupa un tipo di dato: sizeof();
+sizeof() restituisce un numero di tipo size_t
+Ex: sizeof_t demente = sizeof(int);
+
+Esempio di codice:
+#define N 300
+int v[N];
+FILE * fin;
+
+...//apertura file
+
+fwrite(v, sizeof(int), N/2, fin);
+fwrite(&v[41], sizeof(int), 12, fin);
+
+fread(frase, sizeof(char), N, ft);
+fread(&n, sizeof(int), 1, fsrc);
+
+/*le due scritture sono equivalenti*/
+/*******************************************************/
+Lunedì 26 Novembre 2018
+Commento agli esercizi di laboratorio della volta scorsa:
+In generale chi fa il main comanda, perche' da' la visione di come si affronta il problema.
+Il numero di alberi da cercare e'dato dal main come parametro.
+Martedì 18 festa di mattina, il pomeriggio c'è una attività ludica a gruppi autocreati su base vlontaria e facciamo una sfida contro le altre sezioni. Obiettivo: cercare di arrivare primi ad una soluzione. Ci sarà un sistema automatico che prende in input il sorgente, compila, fa dei test e verifica la soluzione. Bisogna iscriversi per gestire l'organizzazione.
+
+Ci mancano ricorsione e allocazione dinamica.
+LA RICORSIONE.
+
+È uno strumento avanzato di programmazione senza il quale si vive benissimo, non tanto perché è secondario ma perché si può risolvere anche senza. Può essere una palla al piede perché può non essere spontaneo trovare una soluzione ricorsiva.
+Una funzione ricorsiva contiene una chiamata al sottoprogramma stesso. 
+La versione più lasca è fatta attraverso un altro sottoprograma.
+SOluzione ricorsiva VS iterativa. (iterativa è quella classica).
+>> Vedi file ese1.c in FI_BOLCHINI/20181126/
+Per risolvere il fattoriale ricorsivo:
+Continuo ad iterare finché non arrivo al passo base dove devo arrivare.
+
+/{	f(n) = n + f(n-1)
+/{	f(0) = 1
+
+Pensiamo al problema degli alberi: se faccio l'approccio greedy vado a tentativi, non ragiono e ci metto un secolo.
+Un approccio ricorsivo sarebbe essere chiamato con n alberi e d dimensione; chiamandosi la volta dopo il problema sarà diminuito con n-1 e d-1.
+
+Il costo della ricorsione è che si rischia di andare in stack overflow perché il programma diventa più pesante. Pregio: ci vuole di meno per scrivere la soluzione ricorsiva.
+
+Eserczio su piazza paint con 0 e 1. Nel momento in cui tocco con uno 0, diventano zeri tutti gli elementi connessi.
+
+SCOPE DELLE VARIABILI (VISIBILITÀ)
+Variabili vengono allocate sullo stack delle chiamate, vivono nel momento in cui il sottoprogramma esiste, poi spariscono
+Esistono altri 2 tipi di variabili che ella vorrebbe che noi non utilizzassimo
+
+LE VARIABILI STATIC
+static int a;
+si dichiara all'interno di un sottoprogramma e in chiamate successive mantiene il suo valore.
+Questo perché è salvata in un'altra parte, non nello stack. La visibilità è comunque limitata al sottoprogramma che l'ha dichiarata. La dichiarazione la si DEVE dichiarare in fase di inizializzazione.
+
+Segnaposto dell'indirizzo(POINTER) è %p. Restituisce in esadecimale lo spazio di memoria.
+/***********************************************/
+Martedì 27 novembre 2018
+Occhio alla sintassi
+Problema: devo memorizzare i dati? Se sì chiedersi se ho un numero max di dati. Se sì uso l'array statico. Se no nasce il bisogno di usare un array dinamico.
+Mentre il programma sta lavorando, chiedo al SO della memoria. Se posso, utilizzo la memoria statica. 
+
+Allocazione dinamica unica: la faccio una volta sola
+VS
+Allocazione dinamica con liste concatenate semplici.
+---------          
+|  125  | int a    
+---------          
+|  125  | v[0]     
+---------          
+|  18   | v[1]     
+---------          
+|  ...  | ...      
+---------          
+|   0   | v[N-1]   
+---------          
+|   0   | int * p1 
+---------          
+|   0   | int * p2 
+---------          
+
+Esiste all'interno della memoria di lavoro dedicata al mio programma una memoria chiamata HEAP.
+Anche questa memoria può finire: devo liberare la memoria quando non mi serve più.
+
+Se ho bisogno di allocazione dinamica di memoria userò una variabile di tipo indirizzo.
+Quando ho finito di usare quello spazio, lo libero.
+Passaggio per pacchettoni
+Usiamo 2 SOTTOPROGRAMMI DI LIBRERIA:
+
+Allocazione di memoria dinamica (memory allocation):
+	void * malloc( size_t ); /*Prototipo*/
+Riceve come parametro un tipo size_t
+Esempio: malloc(num * sizeof(int)); /* restituisce lo spazio occupato da num elementi di tipo intero */
+malloc() restituisce un indirizzo di tipo void (nessun tipo particolare)
+
+Esempio (vedi file c):
+	p1 = (int *) malloc(num * sizeof(int));
+
+Rilasciare la memoria:
+	free(void *);
+
+Per ogni malloc verso una variabile, mi aspetto di avere una free della stessa variabile.
+Per ogni malloc controllo se mi è stato fornito lo spazio per lavorare.
+Se la memoria si esaurisce, malloc restituisce NULL. Se cerco di andare avanti errore
+
+Null pointer assignment : var punta a indirizzo non suo
+Segmentation violation: no indirizzo significativo (prob sulla malloc)
+
+Ci sono certi casi in cui ci farebbe comodo avere della memoria dinamica organizzata a liste.
+
+___________     __________       ________ 
+|char a=c |     |    a    |      |   S   |
+|int x=1  |  -->|    2    |   -->|   1   |
+|---------|  |  |---------|   |  |-------|
+|pointer °|--|  |    °--------|  |   °------>NULL
+|_________|     |_________|      |_______|     
+
+Scomodità: parto sempre dal primo elemento
+Vantaggio: flessibilità
+
+LA LISTA
+Esiste un elemento che punta al primo elemento della lista.
+Quando parte è sempre vuota.
+_______ * head = NULL;
+Ciascun elemento punta al successivo.
+L'ultimo elemento non ha un successivo, o meglio, il suo puntatore punta a NULL.
+Posso aggiungere un elemento sia in cima che in fondo alla lista (inserimento in testa / coda).
+Esistono dei metodi:
+	add
+	pop per eliminare quello in cima
+	elimina elemento specifica
+	contatore
+	trova
+/*******************************************/
+Lunedì 3 dicembre 2018
+LISTE DINAMICHE
+Se ho modo di capire quanta memoria mi serve, faccio solo una malloc (unico blocco heap).
+Altrimenti creo una struttura più organizzata che alloca più spazio.
+Ogni volta che devo memorizzare un dato chiedo memoria per il dato e predispongo uno spazio per un rifeimento ad un'altra area di memoria.
+LISTA CONCATENATA SEMPLICE (si riferisce al successivo)
+_________     ______________     ________
+|1st el.|    | 2nd element  |    |last el|
+|_______|  ->|______________|    |_______|
+|Pointer|--| | Pointer      |--->|pointer|--->NULL
+|_______|    |______________|    |_______|
+Esistono anche liste che hanno puntatori verso l'elemento precedente e successivo.
+Pago in termini di spazio ma è più prestante perché posso ciclarla a ritroso.
+
+Esistono anche gli alberi, che sono liste con due puntatori.(non richieste per fondamenti)
+
+Ci sono sottoprogrammi per utilizzare le liste.
+
+Chiedere all'utente una sequenza di numeri da visualizzare in ordine inverso (terminatore = 0).
+Bisogna dichiarare una struct ogni volta che si fa una lista.
+Nella struct ci va il dato e il pointer. Il dato ha il tipo richiesto, il pointer è di tipo struct nome_s;
+
+typedef nodo_s{
+	int valore;
+	struct nodo_s * next;
+}nodo_t;
+
+Quanto costa addizionalmente una lista?
+
+Nel main ci va il puntatore al primo elemento della lista, che punta a NULL;
+nodo_t * head = NULL;
+
+Esercizio su liste.c
+
+In questo esercizio abbiamo fatto un esempio di lista concatenata semplice.
+Bisogna spaere fare inseriemnto in testa, coda
+
+ES x domani:
+
+Scrivere un sottoprogramma che ricevuta in ingresso una lista (si intende la testa) restituisce la lista in cui gli elementi sono in ordine inverso.
+Es. input: lista con 5, 18, 11, 7
+output: 7, 11, 18, 5
+/*********************************/
+Martedì 4 dicembre 2018
+Riassunto di ieri:
+1) Definizione di tipo lista composta da 2 parti: la parte di dati ed un riferimento ad un elemento ad un tipo della stessa struttura.
+2) Almeno una testa di lista da inizializz. a NULL
+3) Almeno un sottoprogramma che fa allocazione dinamica (almeno una malloc fatta a nastro, che cicla)
+Sapere manipolare le liste
+
+oggi file di riferimento è: 
+20181204/esercizoListe.c
+
+Fare programma che riceve in ingresso 2 liste che rappresentano 2 insiemi crea e restituisce l'insieme unione
+Per casa esercizio proposto quello dell'intersezione.
+
+Scrivere un sottoprogramma che riceve in ingresso un array di valori interi e qualsiasi altro parametro ritenuto strettamente necessario e restituisce tutti e soli i valori dell'array che sono minori o uguali alla media dei valori contenuti nell'array stesso. (Utilizzare la lista).
+/***********************/
+Lunedì 10 dicembre 2018
+argc, argv, getopt
+Acqusizione e gestione di argomenti e opzioni da linea di comando
+Ordine delle opzioni poco rilevante per acquisizione dati da riga da comando
+Le informazioni finiscono in argv, che è un array di stringhe. La sua dimensione è data da argc.
+Esempio di esecuzione
+./prog info1 info2 info3 <invio>µ¶·¸¹º»¼½¾¿ÀÁÂÃÄÅÆÇÈÉÊ
+argv -> argument vector 0_0 mind blown
+"io sono la shell, quindi l'interprete comandi" - Bolchini Cristiana, 2018
+Prendo un array di stringhe significa che è un array argv di puntatori a carattere che sono un modo di scrivere l'indirizzo cdel carattere.
+argc è sempre >=1 (1 è sempre il nome dell'eseguibile, che sta in posizione 0).
+Sottoprogramma atoi = ascii to integer che, ricevuta in ingresso una stringa, restituisce un intero 
+int atoi(char *);
+esiste anche atof, ASCII to float
+SOttoprogramma tipico
+void showProgMissingArg(char *); //mostra errore se parametro manca
+void showProgUsage(char *); // come chiamare il programma
+File di testo con argv
+Esistono dei sotoprogrammi di libreria che permettono di organizzare i paramentri
+Questi sono getopt e getopt_long
+richiede le definizini delle opzioni supportate breve ed estesa
+
+nel main ci va
+SHort options:
+const char * short_options = "hpt:o";
+Long options
+const struct option long optins[] = {
+	{"help",		0, NULL, 'h' },
+	{"prime,		0, NULL, 'p' },
+	{"threshold",	1, NULL, 't' },
+	{"output",		1, NULL, 'o' },
+	{NULL,			0, NULL, 0} /*rq end of array*/
+};
+
+codice getopt_long
+while(next_option = getopt_long (argc, argv, short_options, &num_opt) != -1){
+	/*analisi dei casi*/
+	if(next_option == 'h'){
+	/*visualizza aiuto*/
+		print_usage(stdout, nomeexe, 0);
+	}else if(next_option == 't'){
+		/*c'è un valore x lopzione lo si usa*/
+		tresh = atoi(optarg);
+	}else if(next_option == 'p'){
+		/*non c'è valore*/
+		blnPrime = 1;
+	}else if(next_option == 'o'){
+		nomedst = optarg;
+	}else if(ext_option == '?'){
+	/*operazione non prevista*/
+		print_usage(stderr, nomeexe, 1);
+	}else{
+		/*situazione inattesa*/
+		abort(); /*eturn -1*/
+	}
+}
+	while((next_option = getopt...........//poi c'è quello normale
+
+Quesiti del'anno scorso
+
+/**********/
+Martedì 11 dicembre 2018
+eserciztazione a rovescio
+Strcpy copia il contenuto di una stringa in un'altra
+il prototipo è
+char * strcpy(char * dst, char * src);
+la stringa destinazione deve poter contenere la sorgente.
+Non è la strcpy ad allocare lo spazio.
+La strcat fa più o meno la stessa cosa ma parte a scrivere dal terminatore.
+Quindi concatena quello che c'era prima con il nuovo.
+strcat(char * dst, char * src);
+non ho capito un cazzo, ma scuoto la testa verticalmente
+strncpy(char * dst, char * src, int n);
+questo metodo serve per copiare dalla sorgente un numero definito di caratteri
+/*******************/
+Lunedì 17 dicembre 2018
+Cose: visibilità variabili, ripasso...
+Variabili GLOBALI
+Compromesso tra risparmio dei parametri in ingresso e privilegi di modifica del dato nei sottoprogrammi
+Introduzione di un costrutto di selezione: lo SWITCH.
+Serve per controllare dei valori interi o caratteri
+
