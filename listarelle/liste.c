@@ -18,6 +18,7 @@ nodo_t * deleteByPos(nodo_t *, int);
 void stampa(nodo_t *);
 nodo_t * search(nodo_t *, int);
 nodo_t * delete(nodo_t *, int);
+nodo_t * append(nodo_t *, int);
 
 int main(int argc, char * argv[]){
 	int i;
@@ -71,6 +72,25 @@ nodo_t * delete(nodo_t * h, int num){
 	free(cur);
 	return h;
 }
+
+nodo_t * append(nodo_t * h, int n){
+	nodo_t * ptr;
+	nodo_t * e;
+	if((e = (nodo_t *)malloc(sizeof(nodo_t)))){
+		e->val = n;
+		e->next = NULL;
+		if(!h)
+			h = e;
+		else{
+			for(ptr = h; ptr->next!=NULL; ptr = ptr->next)
+				;
+			ptr->next = e;
+		}
+	}else
+		printf("Errore allocazione memoria in append");
+	return h;
+}
+
 /*
 nodo_t * deleteByPos(nodo_t * h, int num){
 	nodo_t * ptr = NULL;
