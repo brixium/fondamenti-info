@@ -1,0 +1,20 @@
+Comandi:
+pwd	in che cartella sei
+ls	cosa c'è nella cartella	-la info aggiuntive
+mkdir	creazione cartella
+rm	remove, elimina		-r elimina la directory		*.ext rm tutti i file con .ext
+mv	move, sposta		-t DIRDEST file1 file2 muove più files
+cd	change directory, spostarsi di cartella
+
+Estensione del file
+.c	sorgente C
+.java	sorgente java
+.py	sorgente python
+.cpp	sorgente c++
+
+Il compilatore produce linguaggio assembly a partire dal C
+COMANDO PER COMPILARE C:
+gcc -Wall -O2 -std=c89 -pedantic -static -o fileexec.out filesrc.c
+-Wall mostra tutti i warning (W) tutti (all) 
+
+Compilare con math.h: aggiungere il flag -lm .
