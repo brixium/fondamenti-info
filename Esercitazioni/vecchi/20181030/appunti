@@ -1,0 +1,58 @@
+Giovedì 11 10 2018
+Appunti di esercitazioni di fondamenti di informatica
+
+Approssimazione dei numeri in floating point
+L'errore è minimo
+
+Scrivo programma che acquisice 5 numeri interi e li visualizza in ordine opposto.
+Fattibile però se le variabili aumentano significativamente, conviene utilizzare un sistema migliore. Ho bisogno di una funzioanlità che consenta di tenere in memoria valori multipli con un numero di valori fissato. Invento un nome unico e dato un nome basta un indice per accedere a tale valore, sia in lettura che in scrittura
+ARRAY o VETTORE
+Struttura monodimensionale di elementi omogenei tra di loro rispetto al tipo
+Gli array hanno una dimensione COSTANTE, fixed, e nota a priori.
+Se non so la dimensione, non uso l'array
+SYNTAX: tipo nome [DIMENSIONE]
+int numeri [5];
+NON METTERE MAI UNA VARIABILE COME DIMENSIONE! Utilizza solo costanti con define o numeri.
+Il primo elemento di un array ha indice 0. L'ultimo ha indice DIMENSIONE-1.
+Sintatticamente non è un errore prendere il valore che non è parte dell'array ma semanticamente lo è.
+Come accedere a queste 5 variabili? Con una variabile indice (i).
+Variabili sono scalari, vettori vettoriali. Scapellato approves.
+
+Acquisisco una valore intero positvo compreso tra 0 e 1023 e visualizzo la sua codifica in base 2 (non speculare).
+Se l'insieme è limitato posso usare un array, se non so la dimensione NON uso un array.
+
+Cicli a conteggio: FOR
+Si pronuncia FÒÒÒÒÒÒÒÒÒÒÒÒR
+Composto da: inizializzazione variabile i (indice), condizione di permanenza, incremento dell'indice.
+SINTASSI: 
+int i, var;
+for(i=0; i<val; i++)
+i=0 -> inizializzazione
+i<val -> condizione
+i++ -> incremento
+Ciascuna di queste 3 parti è facoltativa/opzionale.
+Es1. for( ; i<n;i++)
+Es2: for(i=0; n<N; )
+Es3: for( ; ; ) {} //ciclo infinito
+Se dovessi scrivere più cose nelle inizializzazioni o nell'incremento utilizzo il separatore , (virgola)
+Es. for(i=0, j=N; i<N && J!=i; i++, j--)
+
+Non sostituire tutti i cicli while con un for, please perché possono sorgere problemi in altri linguaggi se non si utilizza la i nella condizione.
+Es: for(int i=0; dim<N; i++) //non è errore in C ma non accettato ovunque
+
+Scrivere un programma che acquisice 2 sequenze di 10 bit ciascuna (0/1 x 10 volte). Quindi calcolo la distanza di Hamming e poi visualizzarla. Memorizzare le 2 sequenze.
+Es. 	1010101010
+	0110110110
+Result:	1100011100
+Se i bit sono uguali la distanza è 0, se sono diversi è 1.
+
+Ciclo a conteggio con 10 numeri con 2 variabili diverse. Scrivere i commenti al codice. Se devo controllare che il valore sia bello avrò do{scanf}while(); dentro ad un for
+
+Martedì 16 ottobre 2018
+Ho fatto un esercizio in un'ora e mezza seeeeeeeeeeeeeeeeeeeeeeeeeeeeee!Ho fatto un esercizio in un'ora e mezza seeeeeeeeeeeeeeeeeeeeeeeeeeeeee!
+
+Martedì 30 ottobre 2018
+Oggi c'è l'esercitatore e ieri pioveva dentro l'edificio. Speriamo bene.
+Correzione eserecizio MCD e MCM.
+Si può fare quello del prof oppure con l'algoritmo di euclide, più difficile ma più efficiente.
+
