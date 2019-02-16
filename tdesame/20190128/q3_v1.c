@@ -7,6 +7,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+
 #define BASE 2
 #define JOLLY 'x'
 
