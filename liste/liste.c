@@ -14,11 +14,12 @@ typedef struct nodo_s{
 }nodo_t;
 
 nodo_t * push(nodo_t * , int);
-nodo_t * deleteByPos(nodo_t *, int);
+/*nodo_t * deleteByPos(nodo_t *, int);*/
 void stampa(nodo_t *);
 nodo_t * search(nodo_t *, int);
 nodo_t * delete(nodo_t *, int);
 nodo_t * append(nodo_t *, int);
+void freelist(nodo_t *);
 
 int main(int argc, char * argv[]){
 	int i;
@@ -89,6 +90,17 @@ nodo_t * append(nodo_t * h, int n){
 	}else
 		printf("Errore allocazione memoria in append");
 	return h;
+}
+
+void freelist(nodo_t * h){
+	nodo_t * tmp;
+
+	while(h != NULL){
+		tmp = h;
+		h = h->next;
+		free(tmp);
+	}
+	return;
 }
 
 /*
