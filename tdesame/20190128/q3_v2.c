@@ -1,4 +1,4 @@
-/*Versione 2*/
+/*Versione 2 (iterativa)*/
 #include <stdio.h>
 #include <math.h>
 

@@ -1,4 +1,6 @@
 /* 
+Versione 1 che comprende la prima ed ultima consegna
+
 6pt: Scrivere un sottoprogramma che visualizza tutti i numeri binari rappresentati da una stringa costituita dai valori '0','1' e 'x', dove le 'x' possono assumere valore sia 0, sia 1. Quindi, se il sottoprogramma riceve in ingresso la stringa 1x0 visualizza 100 e 110 (l’ordine non è importante). Scrivere un sottoprogramma genera che riceve in ingresso una stringa costituita esclusivamente di 0,1 e x (è senz’altro così) e visualizza tutti i numeri binari rappresentabili.
 1pt: versione ricorsiva del sottoprogramma genera (è possibile aggiungere un eventuale parametro).
 1pt: Scrivere un programma che acquisisce da riga di comando una stringa e chiama il sottoprogramma genera.
