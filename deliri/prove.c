@@ -1,4 +1,4 @@
-#include "../liste/liste.h"
+#include "../liste/intlist.h"
 
 int main(int argc, char * argv[]){
 	node_t * h = NULL;
