@@ -13,25 +13,17 @@ una direttiva #define NCOL 10
 void indexOfVal(int[][NCOL], int, int, int, int *, int*);
 
 int main(int argc, char * argv[]){
-	int inva[NROW][NCOL], nr, nc, i ,j, *xcoor, *ycoor, valore;
+	int inva[NROW][NCOL], nr, nc, i ,j, xcoor, ycoor, valore;
 
-	xcoor = NULL;
-	ycoor = NULL;
 	nr = NROW;
 	nc = NCOL;
-	valore = 9999;
+	valore = 99;
 	
-	if((xcoor = (int *) malloc(sizeof(int))) && (ycoor = (int *) malloc(sizeof(int))) ){
-		for(i=0; i<nr; i++)
-			for(j=0; j<nc; j++)
-				inva[i][j] = i+j;
-		indexOfVal(inva, valore, nr, nc, xcoor, ycoor);
-		printf("X: %d\nY: %d\n", *(xcoor), *(ycoor));
-
-		free(ycoor);
-		free(xcoor);
-	}else
-		printf("Troppa poca memoria libera sul dispositivo\n");
+	for(i=0; i<nr; i++)
+		for(j=0; j<nc; j++)
+			inva[i][j] = i+j;
+	indexOfVal(inva, valore, nr, nc, &xcoor, &ycoor);
+	printf("X: %d\nY: %d\n", xcoor, ycoor);
 	return 0;
 }
 
