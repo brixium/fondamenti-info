@@ -1,3 +1,11 @@
+/*
+Scrivere un sottoprogramma get_id che ricevuta in ingresso una stringa link ed una stringa header, trova e restituisce al chiamante l’identificativo numerico intero id presente nella stringa link, dopo la parte iniziale individuata dall’header.
+Esempio:
+Ingresso: 	link: http://131.175.56.243/measure/60min/sensor/variable/400/2016/01/29
+			header: http://131.175.56.243/measure/60min/sensor/variable/
+Uscita:
+			400
+*/
 #include <stdio.h>
 #include <math.h>
 
