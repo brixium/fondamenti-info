@@ -1,81 +1,102 @@
-#include <stdio.h>
-
-/* 
-Scrivere un sottoprogramma _ricorsivo_ che ricevuti in ingresso due interi "n" e "k" con n≥k≥0 senz’altro, calcola e restituisce al chiamante il coefficiente binomiale
-
-(n)      n!   
-( ) = ________  (n>=k)
-(k)   k!(n-k)! 
-
-(n) (n-1)   (n-1)
-( )=(   ) + (   )
-(k) ( k )   (k-1)
-
+/*
+Scrivere un sottoprogramma che ricevuta in ingresso una lista per la gestione di numeri interi, restituisce la lista in modo tale che tutti gli elementi adiacenti uguali siano ridotti ad un solo elemento. Scrivere anche la definizione del tipo opportuno.
 */
-/*Prototipo della funzione coeffBinRec che è quella chiesta. Non richieste le implementazioni iterative, ma svolte lo stesso*/
-int coeffBinRec(int, int);
-int coeffBinIter(int, int);
-int coeffBinImproved(int, int);
+
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct nodo_s{
+	int val;
+	struct nodo_s * next;
+}nodo_t;
+
+nodo_t * collapse(nodo_t *);
+/*Prototipi non richiesti*/
+nodo_t * append(nodo_t *, int);
+nodo_t * push(nodo_t *, int);
+void freelist(nodo_t *);
+void printlist(nodo_t *);
 
 int main(int argc, char * argv[]){
-	int n, k;
-	n = 16;
-	k = 7;
-	printf("N: %d; K: %d\n", n, k);
-	printf("V. iterativa: %d\nV. iter. improved: %d\nV. ricorsiva: %d\n", coeffBinIter(n, k), coeffBinImproved(n,k), coeffBinRec(n,k));
+	int n;
+	nodo_t * lista = NULL;
+	printf("Inserisci i numeri nella lista. (con 0 termini l'inserimento)\n");
+	n = 1;
+	while(n){
+		scanf("%d", &n);
+		lista = append(lista, n);
+	}
+	printf("Lista inserita:\n");
+	printlist(lista);
+	printf("Lista finale:\n");
+	lista = collapse(lista);
+	printlist(lista);
 	return 0;
 }
 
-int coeffBinRec(int n, int k){
-	if(n == k)
-		return 1;
-	return coeffBinRec(n, k+1) * (k+1) / (n-k);
-}
-
-int coeffBinIter(int n, int k){
-	int num, denL, denR, i;
-	/*Condizioni di overflow*/
-	if(n<0 || k<0 || n > 12 || k > 12)
-		return -1;
-	/*Condizioni speciali*/
-	if((n-k == 1 && n>k) || (k==1) )
-		return n;
-	/*Condizioni normali*/
-	num = 1;
-	for(i=0; i < n; i++)
-		num = num * (i+1);
-	denL = 1;
-	for(i=0; i < k; i++)
-		denL = denL * (i+1);
-	denR = 1;
-	for(i=0; i < n-k; i++)
-		denR = denR * (i+1);
-
-	return num/(denL*denR);
-}
-
-int coeffBinImproved(int n, int k){
-	int diff, num, den, i;
-	
-	diff = n-k;
-	if(diff < 0 || k<0 || n<0 || n>15)
-		return -1;
-	if(diff == 0)
-		return 1;
-	if(diff == 1 || k == 1)
-		return n;
-	den = 1;
-	num = n;
-	if(n/k <= 2){
-		for(i=2; i <= diff; i++){
-			den = den * i;
-			num = num * (n-i+1);
-		}
-	}else{
-		for(i=k; i >= 2; i--){
-			num = num * (n-i+1);
-			den = den * i;
+nodo_t * collapse(nodo_t * h){
+	nodo_t * succ;
+	nodo_t * now;
+	nodo_t * e;
+	for(now = h, succ = h->next; succ; now = now->next, succ = succ->next){
+		if(now->val == succ->val){
+			/*NON FUNZIONA QUELLO CHE HO SCRITTO QUI DENTRO*/
+			e = succ->next;
+			free(succ);
+			now->next = e;
 		}
 	}
-	return num/den;
+	return now;
+}
+
+
+
+
+
+/*metodi non richiesti*/
+nodo_t * push(nodo_t * h, int v){
+	nodo_t * ptr = NULL;
+	if((ptr = (nodo_t *)malloc(sizeof(nodo_t)))){
+		ptr->val = v;
+		ptr->next = h;
+	}else
+		printf("No memoria\n");
+	return ptr;
+}
+
+void freelist(nodo_t * h){
+	nodo_t * ptr = NULL;
+	while(h!=NULL){
+		ptr = h;
+		h = h->next;
+		free(ptr);
+	}
+	return;
+}
+
+nodo_t * append(nodo_t * h, int v){
+	nodo_t * ptr = NULL;
+	nodo_t * e = NULL;
+	if((e = (nodo_t *) malloc(sizeof(nodo_t)))){
+		e->val = v;
+		e->next = NULL;
+		if(!h)
+			h = e;
+		else{
+			for(ptr = h; ptr->next != NULL; ptr = ptr->next)
+				;
+			ptr->next = e;
+		}
+	}else
+		printf("No memory\n");
+	return h;
+}
+
+void printlist(nodo_t * h){
+	nodo_t * ptr;
+	for(ptr = h; ptr; ptr = ptr->next){
+		printf("%d ", ptr->val);
+	}
+	printf("\n");
+	return;
 }
