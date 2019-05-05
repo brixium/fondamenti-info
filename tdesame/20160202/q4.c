@@ -20,12 +20,19 @@ void printlist(nodo_t *);
 int main(int argc, char * argv[]){
 	int n;
 	nodo_t * lista = NULL;
+	nodo_t * p = NULL;
 	printf("Inserisci i numeri nella lista. (con 0 termini l'inserimento)\n");
 	n = 1;
 	while(n){
 		scanf("%d", &n);
 		lista = append(lista, n);
 	}
+	/*Elimino l'ultimo el.*/
+	for(p = lista; p->next->next; p=p->next)
+		;
+	p->next = NULL;
+	free(p->next);
+	/*fine */
 	printf("Lista inserita:\n");
 	printlist(lista);
 	printf("Lista finale:\n");
@@ -33,20 +40,20 @@ int main(int argc, char * argv[]){
 	printlist(lista);
 	return 0;
 }
-
+/*OK*/
 nodo_t * collapse(nodo_t * h){
-	nodo_t * succ;
-	nodo_t * now;
-	nodo_t * e;
-	for(now = h, succ = h->next; succ; now = now->next, succ = succ->next){
-		if(now->val == succ->val){
-			/*NON FUNZIONA QUELLO CHE HO SCRITTO QUI DENTRO*/
-			e = succ->next;
-			free(succ);
-			now->next = e;
-		}
+	nodo_t * ptr = NULL;
+	nodo_t * last = NULL;
+
+	for(last = NULL, ptr=h; ptr->next; last = ptr, ptr = ptr->next){
+		while(ptr->next->next && ptr->next->val == ptr->val)
+			ptr->next = ptr->next->next;
 	}
-	return now;
+	if(last->val == ptr->val){
+		last->next = NULL;
+		free(ptr);
+	}
+	return h;
 }
 
 
