@@ -13,42 +13,44 @@ typedef struct nodo_s{
 nodo_t * collapse(nodo_t *);
 /*Prototipi non richiesti*/
 nodo_t * append(nodo_t *, int);
-nodo_t * push(nodo_t *, int);
 void freelist(nodo_t *);
 void printlist(nodo_t *);
 
 int main(int argc, char * argv[]){
 	int n;
 	nodo_t * lista = NULL;
-	nodo_t * p = NULL;
 	printf("Inserisci i numeri nella lista. (con 0 termini l'inserimento)\n");
 	n = 1;
 	while(n){
 		scanf("%d", &n);
-		lista = append(lista, n);
+		if(n)
+			lista = append(lista, n);
 	}
-	/*Elimino l'ultimo el.*/
-	for(p = lista; p->next->next; p=p->next)
-		;
-	p->next = NULL;
-	free(p->next);
-	/*fine */
 	printf("Lista inserita:\n");
 	printlist(lista);
 	printf("Lista finale:\n");
 	lista = collapse(lista);
 	printlist(lista);
+	freelist(lista);
 	return 0;
 }
 /*OK*/
 nodo_t * collapse(nodo_t * h){
-	nodo_t * ptr = NULL;
+	nodo_t * ptr  = NULL;
 	nodo_t * last = NULL;
-
-	for(last = NULL, ptr=h; ptr->next; last = ptr, ptr = ptr->next){
-		while(ptr->next->next && ptr->next->val == ptr->val)
+	nodo_t * irr  = NULL;
+	
+	if(!h->next)
+		return h;
+	for(last = NULL, ptr=h; ptr->next; last = ptr, ptr = ptr->next)
+		while(ptr->next->next && ptr->next->val == ptr->val){
+			irr = ptr->next;
 			ptr->next = ptr->next->next;
-	}
+			free(irr);
+		}
+	
+	if(irr)
+		free(irr);
 	if(last->val == ptr->val){
 		last->next = NULL;
 		free(ptr);
@@ -56,21 +58,7 @@ nodo_t * collapse(nodo_t * h){
 	return h;
 }
 
-
-
-
-
 /*metodi non richiesti*/
-nodo_t * push(nodo_t * h, int v){
-	nodo_t * ptr = NULL;
-	if((ptr = (nodo_t *)malloc(sizeof(nodo_t)))){
-		ptr->val = v;
-		ptr->next = h;
-	}else
-		printf("No memoria\n");
-	return ptr;
-}
-
 void freelist(nodo_t * h){
 	nodo_t * ptr = NULL;
 	while(h!=NULL){
