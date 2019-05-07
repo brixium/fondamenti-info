@@ -11,7 +11,7 @@ typedef struct nodo_s{
 }nodo_t;
 
 nodo_t * collapse(nodo_t *);
-/*Prototipi non richiesti*/
+/*Prototipi non richiesti e main non richiesto*/
 nodo_t * append(nodo_t *, int);
 void freelist(nodo_t *);
 void printlist(nodo_t *);
