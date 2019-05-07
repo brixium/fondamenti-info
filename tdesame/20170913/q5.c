@@ -1,3 +1,6 @@
+/*
+Scrivere un sottoprogramma scomponi che ricevuto in ingresso un numero intero senz’altro strettamente positivo n lo scompone e restituisce al chiamante i fattori. Realizzare un’opportuna struttura dati. Ad esempio, per n = 60 il programma trasmette i valori 2 2 3 5.
+*/
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -12,6 +15,7 @@ void stampa(nodo_t *);
 nodo_t * search(nodo_t *, int);
 nodo_t * delete(nodo_t *, int);
 nodo_t * scomponi(int);
+nodo_t * append(nodo_t *, int);
 
 int main(int argc, char * argv[]){
 	nodo_t * finale = NULL;
@@ -28,7 +32,7 @@ nodo_t * scomponi(int n){
 
 	while(i<=n/2){
 		if(num%i==0){
-			fattori = push(fattori, i);
+			fattori = append(fattori, i);
 			num = num / i;
 		}else
 			i++;
@@ -74,5 +78,20 @@ nodo_t * delete(nodo_t * h, int num){
 	else
 		prev->next = cur->next;
 	free(cur);
+	return h;
+}
+nodo_t * append(nodo_t * h, int num){
+	nodo_t * ptr;
+	nodo_t * e;
+	if((e = malloc(sizeof(nodo_t)))){
+		e->val = num;
+		e->next = NULL;
+		if(!h)
+			return e;
+		for(ptr=h; ptr->next; ptr = ptr->next)
+			;
+		ptr->next = e;
+	}else
+		printf("No memory\n");
 	return h;
 }
