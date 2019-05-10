@@ -7,6 +7,9 @@ Scrivere un sottoprogramma in C selectitems che ricevuta in ingresso una lista p
 #include <stdio.h>
 #include <stdlib.h>
 
+#define MIN 3
+#define MAX 17
+
 typedef struct nodo_s{
 	int val;
 	struct nodo_s * next;
@@ -14,8 +17,19 @@ typedef struct nodo_s{
 
 nodo_t * selectitems(nodo_t *, int, int);
 nodo_t * insertup(nodo_t *, int);
+nodo_t * push(nodo_t *, int);
+void printlist(nodo_t *);
+
 int main(int argc, char * argv[]){
-	
+	nodo_t * lista = NULL;
+	int n, i;
+	for(i=0; i<7; i++){
+		scanf("%d", &n);
+		lista = push(lista, n);
+	}
+	printlist(lista);
+	lista = selectitems(lista, MIN, MAX);
+	printlist(lista);
 	return 0;
 }
 
@@ -26,4 +40,51 @@ nodo_t * selectitems(nodo_t * h, int min, int max){
 		if(ptr->val < max && ptr->val > min)
 			fin = insertup(fin, ptr->val);
 	return fin;
+}
+
+nodo_t * insertup(nodo_t * h, int num){
+	nodo_t * e;
+	nodo_t * cur, *last;
+
+	if((e=malloc(sizeof(nodo_t)))){
+		e->val = num;
+		e->next = NULL;
+		if(!h)
+			return e;
+		for(last = NULL, cur = h; cur; last = cur, cur = cur->next){
+			if(cur->val > num){
+				if(last){
+					last->next = e;
+					e->next = cur;
+					return h;
+				}else{
+					e->next = cur;
+					return e;
+				}
+			}
+		}
+		last->next = e;
+	}else
+		printf("No memory\n");
+	return h;
+}
+
+nodo_t * push(nodo_t * h, int num){
+	nodo_t * ptr = NULL;
+	
+	if((ptr = malloc(sizeof(nodo_t)))){
+		ptr->val = num;
+		ptr->next = h;
+		return ptr;
+	}
+	printf("No memory\n");
+	return h;
+}
+
+void printlist(nodo_t * h){
+	nodo_t * ptr;
+	for(ptr = h; ptr; ptr = ptr->next)
+		printf("%d ", ptr->val);
+	printf("\n");
+	return;
 }
