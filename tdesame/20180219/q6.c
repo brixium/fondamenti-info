@@ -1,4 +1,3 @@
-/*PROBLEMA: non riesce a sostituire più di una parentesi*/
 /*
 Definire un tipo di dato opportuno clist_t per realizzare una lista dinamica che gestisce caratteri (ogni elemento un carattere) e serve per gestire sequenze di caratteri.
 Si definisce sottosequenza una sequenza di caratteri compresa tra una parentesi tonda iniziale ( e una finale ).
@@ -11,6 +10,8 @@ Si considerino già disponibili e non da sviluppare i sottoprogrammi seguenti:
 #include <stdio.h>
 
 #define SOS '#'
+#define APP '('
+#define CPP ')'
 
 typedef struct clist_s{
 	char val;
@@ -25,16 +26,18 @@ clist_t * exists(clist_t *, char);
 int length(clist_t *);
 clist_t * sos(clist_t *);
 void printlist(clist_t *);
+clist_t * insert(clist_t *, char);
 
 int main(int argc, char * argv[]){
 	clist_t * testa = NULL;
-	testa = append(testa, 'c');
 	testa = append(testa, '(');
 	testa = append(testa, 'c');
 	testa = append(testa, 'c');
 	testa = append(testa, 'c');
 	testa = append(testa, 'c');
+	testa = append(testa, 'c');
 	testa = append(testa, ')');
+	testa = append(testa, 'c');
 	testa = append(testa, 'c');
 	testa = append(testa, 'c');
 	testa = append(testa, '(');
@@ -46,36 +49,17 @@ int main(int argc, char * argv[]){
 }
 
 clist_t * sos(clist_t * h){
-	clist_t * e = NULL;
 	clist_t * ptr, *prev;
-	clist_t * ini = NULL, *fin = NULL;
-	int status; /*1: non fa nulla; 0: distrugge tutto*/
 
-	if((e = (clist_t *)malloc(sizeof(clist_t)))){
-		e->val = SOS;
-		status = 1;
-		for(ptr=h, prev=NULL; ptr; prev=ptr, ptr=ptr->next){
-			if(prev && prev->val == '('){
-				ini = prev;
-				status = 0;
-			}
-			if(ptr->val == ')'){
-				fin = ptr;
-				status = 1;
-			}
-			if(!status){
+	for(ptr=h, prev=NULL; ptr; prev=ptr, ptr=ptr->next){
+		if(prev && prev->val == APP){
+			while(ptr->val != CPP){
 				ptr = pop(ptr);
 				prev->next = ptr;
 			}
-			if(ini && fin){
-				ini->next = e;
-				e->next = fin;
-				ini = NULL;
-				fin = NULL;
-			}
+			prev = insert(prev, SOS);
 		}
-	}else
-		printf("No memoria\n");
+	}
 	return h;
 }
 
@@ -112,4 +96,18 @@ void printlist(clist_t * h){
 		printf("%c", ptr->val);
 	printf("\n");
 	return ;
+}
+/*Inserisce al secondo posto il c*/
+clist_t * insert(clist_t * h, char c){
+	clist_t * ptr;
+	clist_t * e;
+
+	if((ptr=(clist_t *)malloc(sizeof(clist_t)))){
+		ptr->val = c;
+		e = h->next;
+		ptr->next = e;
+		h->next = ptr;
+	}else
+		printf("No memoria\n");
+	return h;
 }
